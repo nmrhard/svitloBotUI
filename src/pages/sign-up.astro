@@ -73,7 +73,7 @@ import Layout from "../layouts/Layout.astro";
 <script>
   import Validator from "validator.tool";
   import { createUserWithEmailAndPassword } from "firebase/auth";
-  import { auth } from "@scripts/firebbase/init";
+  import { auth } from "@scripts/firebase/init";
   import { authClientValidationRules } from "@scripts/firebase/authClientValidationRules";
 
   type FormValues = {
