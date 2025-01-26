@@ -10,7 +10,7 @@ import { getAuth, connectAuthEmulator } from 'firebase/auth';
  * ⚠️ TODO: change these to match your project configuration.
  */
 const firebaseConfig = {
-  apiKey: 'AIzaSyBDJLXS5YbkjeHFYG0Z8WjogOmK4QNiDx8',
+  apiKey: '',
   authDomain: 'svitlobotui.firebaseapp.com',
   projectId: 'svitlobotui',
   storageBucket: 'svitlobotui.firebasestorage.app',
