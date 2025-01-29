@@ -1,6 +1,12 @@
 ---
 import NavBar from "../components/NavBar.astro"
 import Footer from "../components/Footer.astro"
+
+type Props = {
+  isPrivatePage?: boolean;
+};
+
+const { isPrivatePage = false } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
@@ -19,6 +25,36 @@ import Footer from "../components/Footer.astro"
 		</main>
 	</body>
 </html>
+
+<script>
+  import { auth } from "@scripts/firebase/init";
+
+   // Grab the sign-out button 
+  const signoutButton = document.getElementById("sign-out-button") as
+    | HTMLButtonElement
+    | undefined;
+
+  if (signoutButton) {
+    signoutButton.addEventListener("click", async () => {
+      try {
+        signoutButton.disabled = true;
+        signoutButton.innerText = "Signing out ...";
+        const response = await fetch("/api/auth/signout", {
+          method: "POST",
+        });
+
+        if (!response.ok) {
+          throw new Error("server signout failed");
+        } 
+        await auth.signOut ();
+        window.location.href = "/signin";
+      } catch (error) {
+        signoutButton.disabled = false;
+        alert(error);
+      }
+    });
+  }
+</script>
 
 <style>
 	html,
