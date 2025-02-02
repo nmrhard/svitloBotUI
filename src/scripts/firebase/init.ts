@@ -1,11 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
+  apiKey: 'AIzaSyBDJLXS5YbkjeHFYG0Z8WjogOmK4QNiDx8',
   authDomain: 'svitlobotui.firebaseapp.com',
   projectId: 'svitlobotui',
   storageBucket: 'svitlobotui.firebasestorage.app',

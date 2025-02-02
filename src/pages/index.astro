@@ -11,7 +11,7 @@ const urlTokenParam = url.searchParams.get("token");
 
 // Get token from cookies 
 const cookieToken = Astro.cookies.get(TOKEN);
-const token = urlTokenParam || cookieToken.value;
+const token = urlTokenParam || cookieToken?.value;
 
 if (!token) {
   // Unauthorised user. Redirect to sign in
@@ -33,7 +33,7 @@ try {
   });
 } catch (error) {
   console.error("Could not decode token", {
-    fromCookie: !!cookieToken.value,
+    fromCookie: !!cookieToken?.value,
     fromUrl: !!urlTokenParam,
   });
 

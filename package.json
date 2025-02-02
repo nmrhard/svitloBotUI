@@ -16,7 +16,6 @@
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "astro": "^5.1.5",
-    "dotenv": "^16.4.7",
     "firebase": "^11.2.0",
     "firebase-admin": "^13.0.2",
     "react": "^19.0.0",
