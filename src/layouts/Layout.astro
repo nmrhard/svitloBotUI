@@ -1,6 +1,7 @@
 ---
-import NavBar from "../components/NavBar.astro"
 import Footer from "../components/Footer.astro"
+import Logo from "../components/Logo.astro"
+import Button from "../components/Button.astro"
 
 type Props = {
   isPrivatePage?: boolean;
@@ -19,7 +20,19 @@ const { isPrivatePage = false } = Astro.props;
 	</head>
 	<body>
 		<main>
-			<NavBar />
+      <nav class="flex items-center">
+        <div class="flex items-center">
+          <Logo />
+        </div>
+  
+        {
+          isPrivatePage && (
+            <>
+              <Button id="sign-out-button">Sign out</Button>
+            </>
+          )
+        }
+      </nav>
 			<slot />
 			<Footer />
 		</main>
