@@ -1,5 +1,44 @@
 ---
 import Layout from "src/layouts/Layout.astro";
+import { serverApp } from "@scripts/firebase/initServer";
+import { getAuth } from "firebase-admin/auth";
+import { TOKEN } from "@constants/cookies";
+
+// Get client token from the URL param
+const url = new URL(Astro.request.url);
+const urlTokenParam = url.searchParams.get("token");
+
+// Get token from cookies 
+const cookieToken = Astro.cookies.get(TOKEN);
+const token = urlTokenParam || cookieToken?.value;
+
+if (!token) {
+  // Unauthorised user. Redirect to sign in
+  return Astro.redirect("/signin");
+}
+
+const auth = getAuth(serverApp);
+
+try {
+  // verify the auth token
+  await auth.verifyIdToken(token);
+
+  // set token cookie 
+  // Note that the "TOKEN" constant refers to the string "X-Token."
+  Astro.cookies.set(TOKEN, token, {
+    path: "/",
+    httpOnly: true,
+    secure: true,
+  });
+} catch (error) {
+  console.error("Could not decode token", {
+    fromCookie: !!cookieToken?.value,
+    fromUrl: !!urlTokenParam,
+  });
+
+  // Error occurred, e.g., invalid token. Redirect to sign in
+  return Astro.redirect("/signin");
+}
 ---
 
 <Layout isPrivatePage>
