@@ -46,11 +46,20 @@ try {
     <h1 class="text-3xl font-bold mb-8 text-gray-800">Contact Lists</h1>
     <form class="space-y-6">
       <div class="flex flex-col">
-        <label for="webhook" class="text-sm font-medium text-gray-700 mb-2">Webhook</label>
+        <label for="webhookUrl" class="text-sm font-medium text-gray-700 mb-2">Webhook URL</label>
         <input 
           type="text" 
-          id="webhook" 
-          name="webhook" 
+          id="webhookUrl" 
+          name="webhookUrl" 
+          class="rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label for="ipOrUrl" class="text-sm font-medium text-gray-700 mb-2">IP or URL to monitor</label>
+        <input 
+          type="text" 
+          id="ipOrUrl" 
+          name="ipOrUrl" 
           class="rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
@@ -63,14 +72,50 @@ try {
     </form>
   </div>
   <script>
-    const webhookInput = document.getElementById('webhook') as HTMLInputElement;
-    const saveButton = document.querySelector('button[type="submit"]');
+    const ipOrUrlInput = document.getElementById('ipOrUrl') as HTMLInputElement;
+    const webhookUrlInput = document.getElementById('webhookUrl') as HTMLInputElement;
+    const saveButton = document.querySelector('button[type="submit"]') as HTMLButtonElement;
 
-    if (saveButton && webhookInput) {
+    console.log(ipOrUrlInput.value);
+    console.log(webhookUrlInput.value);
+    if (saveButton && ipOrUrlInput && webhookUrlInput) {
+
+
       
-    saveButton.addEventListener('click', (e) => {
+    saveButton.addEventListener('click', async (e) => {
       e.preventDefault();
-      console.log(webhookInput.value);
+      
+      saveButton.innerText = 'Saving...';
+      saveButton.disabled = true;
+
+      try {
+        await fetch('https://uptimemonitor-3i1x.onrender.com/add-monitor', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ipOrUrl: ipOrUrlInput.value,
+            webhookUrl: webhookUrlInput.value,
+          })
+        })
+
+        await fetch('https://uptimemonitor-3i1x.onrender.com/add-webhook', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ipOrUrl: ipOrUrlInput.value,
+            webhookUrl: webhookUrlInput.value,
+          })
+        });
+      } catch (error) {
+        console.error('Error saving monitor or webhook:', error);
+      } finally {
+        saveButton.innerText = 'Save changes';
+        saveButton.disabled = false;
+      }
     });
   }
   </script>
