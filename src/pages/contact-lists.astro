@@ -72,16 +72,14 @@ try {
     </form>
   </div>
   <script>
+    import { baseUrl } from "@constants/api";
+
     const ipOrUrlInput = document.getElementById('ipOrUrl') as HTMLInputElement;
     const webhookUrlInput = document.getElementById('webhookUrl') as HTMLInputElement;
     const saveButton = document.querySelector('button[type="submit"]') as HTMLButtonElement;
 
-    console.log(ipOrUrlInput.value);
-    console.log(webhookUrlInput.value);
     if (saveButton && ipOrUrlInput && webhookUrlInput) {
 
-
-      
     saveButton.addEventListener('click', async (e) => {
       e.preventDefault();
       
@@ -89,7 +87,7 @@ try {
       saveButton.disabled = true;
 
       try {
-        await fetch('https://uptimemonitor-3i1x.onrender.com/add-monitor', {
+        await fetch(`${baseUrl}/add-monitor`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -100,7 +98,7 @@ try {
           })
         })
 
-        await fetch('https://uptimemonitor-3i1x.onrender.com/add-webhook', {
+        await fetch(`${baseUrl}/add-webhook`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
