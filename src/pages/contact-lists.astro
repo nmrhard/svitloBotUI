@@ -85,13 +85,27 @@ try {
   </div>
   <script>
     import { baseUrl } from "@constants/api";
+    import { getContacts } from "./api/contact-list";
 
     const ipOrUrlInput = document.querySelector('#ipOrUrl') as HTMLInputElement;
     const portNumberInput = document.querySelector('#portNumber') as HTMLInputElement;
     const webhookUrlInput = document.querySelector('#webhookUrl') as HTMLInputElement;
     const saveButton = document.querySelector('button[type="submit"]') as HTMLButtonElement;
-
     const deleteContacts = document.querySelector('#deleteContacts') as HTMLButtonElement;
+
+
+
+    if (ipOrUrlInput && portNumberInput && webhookUrlInput) {
+      getContacts().then((res) => {
+        const { ipOrUrl, portNumber, webhookUrl } = res.monitors;
+
+        ipOrUrlInput.value = ipOrUrl;
+        portNumberInput.value = portNumber;
+        webhookUrlInput.value = webhookUrl;
+      }).catch((error) => {
+        console.error('Error fetching contacts:', error);
+      });
+    }
 
     if (deleteContacts) {
       deleteContacts.addEventListener('click', async () => {
