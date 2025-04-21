@@ -68,13 +68,6 @@ const { isPrivatePage = false } = Astro.props;
       try {
         signoutButton.disabled = true;
         signoutButton.innerText = "Signing out ...";
-        const response = await fetch("/api/auth/signout", {
-          method: "POST",
-        });
-
-        if (!response.ok) {
-          throw new Error("server signout failed");
-        } 
         await auth.signOut ();
         window.location.href = "/signin";
       } catch (error) {
