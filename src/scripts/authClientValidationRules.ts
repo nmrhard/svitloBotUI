@@ -16,7 +16,7 @@ export const resetPasswordValidationRules = {
     validate: (val?: string) =>
       (val?.length || 0) >= 6 ? '' : 'Your password is too short',
   },
-  'confirm-password': {
+  confirmPassword: {
     validate: (val?: string, values?: Record<string, string>) =>
       val === values?.password ? '' : 'Your passwords do not match',
   },
