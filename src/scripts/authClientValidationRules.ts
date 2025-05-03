@@ -7,6 +7,17 @@ export const authClientValidationRules = {
   },
   password: {
     validate: (val: string = '') =>
-      val.length < 6 ? 'Your password is too short' : '',
+      val.length < 8 ? 'Your password is too short' : '',
+  },
+};
+
+export const resetPasswordValidationRules = {
+  password: {
+    validate: (val?: string) =>
+      (val?.length || 0) >= 6 ? '' : 'Your password is too short',
+  },
+  'confirm-password': {
+    validate: (val?: string, values?: Record<string, string>) =>
+      val === values?.password ? '' : 'Your passwords do not match',
   },
 };
