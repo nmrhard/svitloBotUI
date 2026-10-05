@@ -1,1 +1,4 @@
-export const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8888' : 'https://uptimemonitor-3i1x.onrender.com';
+export const baseUrl =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000'
+    : 'https://svitlobot.onrender.com';

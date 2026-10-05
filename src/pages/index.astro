@@ -31,7 +31,7 @@ try {
     httpOnly: true,
     secure: true,
   });
-} catch (error) {
+} catch {
   console.error("Could not decode token", {
     fromCookie: !!cookieToken?.value,
     fromUrl: !!urlTokenParam,

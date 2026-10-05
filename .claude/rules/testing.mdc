@@ -1,0 +1,80 @@
+---
+description: Testing standards — use the project's configured test runner
+globs: src/**/*.{test,spec}.{ts,tsx}
+alwaysApply: false
+---
+
+# Testing Rules
+
+## Stack and scope
+
+- Detect the test runner from the project before writing or running tests: read `package.json` scripts (`test`, `test:unit`, `coverage`, etc.) and config files (`vitest.config.*`, `jest.config.*`, and similar). Use that runner and its APIs — do not assume Vitest, Jest, or any other tool.
+- Prefer the project's existing npm scripts (typically `npm test` / `npm run test`, plus coverage if defined). Do not invent alternate commands when scripts already exist.
+- Prefer unit tests for pure logic (`utils`, `payload mappers`, validation helpers).
+- Custom hooks may be tested with React Testing Library (`@testing-library/react`) via `renderHook`.
+- Keep React Testing Library usage scoped to hook behavior tests; do not add E2E tooling unless explicitly requested.
+
+## File placement and naming
+
+- Place tests near the tested code when possible.
+- Use `*.spec.ts` consistently within the local folder style.
+- Use descriptive `describe`/`it` names that explain behavior and expected result.
+
+## Test design
+
+- Follow Arrange-Act-Assert structure (separate setup, action, assertion).
+- Cover happy path, boundary cases, and error/fallback behavior.
+- Keep tests deterministic: no real time/network/random side effects.
+- For dynamic values, inject or mock them (`Date.now`, API responses, i18n).
+
+## Mocking and dependencies
+
+- Mock external dependencies with the project's mock API only when needed (`vi.mock` for Vitest, `jest.mock` for Jest, etc.).
+- Keep translation independent from locale files by stubbing `i18n.t` in tests that require it.
+- Do not duplicate HTTP config logic in tests; validate behavior around `utils/HttpInstance` consumers.
+- For hook tests, mock providers/dependencies at the boundary and assert returned state/actions, not internal implementation.
+
+## Fakes vs mocks
+
+Prefer a **primitive fake** (in-memory impl of the same interface) over call-order mocks when the test depends on multi-step orchestration, races, or stateful side effects. Assert **outcomes** (store state, returned values, fake state), not call queues.
+
+Use a fake when:
+
+- Several HTTP (or other I/O) calls run in one flow — route by URL/input, not `mockResolvedValueOnce` sequence.
+- Race / stale-response scenarios — each request gets its own pending handle; resolve by identity, not by “first Once = first dispatch”.
+- APIs that mutate readable state (e.g. viewport) — fake updates internal state; assert final `x`/`y`/`zoom`, not `toHaveBeenCalledWith`.
+
+Mocks remain fine when:
+
+- Single fetch → assert store/selectors.
+- Asserting URL/query shape is the point of the test.
+- Fire-and-forget side effects with no useful state (`Alert`, bare `dispatch`).
+
+Reuse existing in-memory helpers (`configureStore` in tests, graph test utils, `src/test-utils/createFakeHttp.ts`) instead of inventing parallel doubles.
+
+```ts
+// ❌ brittle — breaks if thunk order/prefetch changes
+mockHttpGet
+  .mockRejectedValueOnce(notFound)
+  .mockResolvedValueOnce({ data: bo })
+  .mockResolvedValueOnce({ data: { versionsOn: false } });
+
+// ✅ stable — behavior keyed by endpoint
+const fakeHttp = createFakeHttp();
+fakeHttp.onGet("boIds=", { data: bo });
+fakeHttp.onGet("/config", { data: { versionsOn: false } });
+fakeHttp.setDefault(notFound);
+mockHttpGet.mockImplementation((url: string) => fakeHttp.get(url));
+```
+
+## Assertions and readability
+
+- One assertion per `it`/`test`: each case covers a single scenario and expected outcome. If you need a second `expect`, split into another `it` with its own Arrange setup — do not mutate shared state between assertions in the same test.
+- Assert outcomes, not implementation details.
+- Use precise expectations (`toEqual`, `toBe`, `toContainEqual`) and avoid weak assertions.
+- Prefer small factory helpers for test data to reduce duplication.
+
+## Quality gate
+
+- After non-trivial changes: run the project's test script and lint script (as defined in `package.json`).
+- For risky logic changes: also run the project's coverage script if it exists, and ensure changed paths are covered.
