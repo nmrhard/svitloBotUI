@@ -24,3 +24,6 @@ env.d.ts
 
 # jetbrains setting folder
 .idea/
+
+# netlify 
+.netlify/
